@@ -130,7 +130,7 @@ class convolutional_layer(Layer):
         self.stride = stride
         self.ksize = ksize
         self.pad = pad
-        self.dnshape = [n, c, ksize, ksize] # darknet shape
+        self.dnshape = [n, c, ksize, ksize] # prediction shape
         self.wshape = dict({
             'biases': [n], 
             'kernel': [ksize, ksize, c, n]
@@ -148,7 +148,7 @@ class convolutional_layer(Layer):
             }
 
     def finalize(self, _):
-        """deal with darknet"""
+        """deal with prediction"""
         kernel = self.w['kernel']
         if kernel is None: return
         kernel = kernel.reshape(self.dnshape)

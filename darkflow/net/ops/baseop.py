@@ -17,7 +17,7 @@ def _name(tensor):
 
 class BaseOp(object):
     """
-    BaseOp objects initialise with a darknet's `layer` object
+    BaseOp objects initialise with a prediction's `layer` object
     and input tensor of that layer `inp`, it calculates the 
     output of this layer and place the result in self.out
     """

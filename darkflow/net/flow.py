@@ -20,6 +20,7 @@ def _save_ckpt(self, step, loss_profile):
 
     profile = file.format(model, step, '.profile')
     profile = os.path.join(self.FLAGS.backup, profile)
+
     with open(profile, 'wb') as profile_ckpt: 
         pickle.dump(loss_profile, profile_ckpt)
 
@@ -29,7 +30,7 @@ def _save_ckpt(self, step, loss_profile):
     self.saver.save(self.sess, ckpt)
 
 
-def train(self):
+def train(self, stop_event=None):
     loss_ph = self.framework.placeholders
     loss_mva = None; profile = list()
 
@@ -37,6 +38,13 @@ def train(self):
     loss_op = self.framework.loss
 
     for i, (x_batch, datum) in enumerate(batches):
+
+        step_now = self.FLAGS.load + i + 1
+        if stop_event is not None and stop_event.is_set():
+            print("---- FINALIZOU TREINAMENTO  (step: ", step_now,") ----")
+            print("______________________________________________________")
+            return
+
         if not i: self.say(train_stats.format(
             self.FLAGS.lr, self.FLAGS.batch,
             self.FLAGS.epoch, self.FLAGS.save
@@ -58,7 +66,7 @@ def train(self):
 
         if loss_mva is None: loss_mva = loss
         loss_mva = .9 * loss_mva + .1 * loss
-        step_now = self.FLAGS.load + i + 1
+
 
         if self.FLAGS.summary:
             self.writer.add_summary(fetched[2], step_now)
